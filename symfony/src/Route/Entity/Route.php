@@ -11,6 +11,7 @@ use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
 
 #[ORM\Entity]
+#[ORM\UniqueConstraint(name: 'uniq_route', columns: ['airline_id', 'airport_a_id', 'airport_b_id'])]
 class Route
 {
     #[ORM\Id]
