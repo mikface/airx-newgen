@@ -18,6 +18,18 @@ class Airport
         'EAP' => 'BSL',
     ];
 
+    public const METROPOLITAN_IATAS = [
+        'PAR',
+        'LON',
+        'BUH',
+        'MIL',
+        'MOW',
+        'REK',
+        'ROM',
+        'STO',
+        'TCI'
+    ];
+
     #[ORM\Id]
     #[ORM\Column(type: 'uuid')]
     private UuidInterface $id;

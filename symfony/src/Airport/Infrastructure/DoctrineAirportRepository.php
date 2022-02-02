@@ -6,6 +6,7 @@ namespace App\Airport\Infrastructure;
 
 use App\Airport\Domain\AirportRepository;
 use App\Airport\Entity\Airport;
+use App\Airport\Exception\AirportNotFound;
 use App\Core\Service\EntityManagerConstructor;
 use Webmozart\Assert\Assert;
 
@@ -32,8 +33,7 @@ final class DoctrineAirportRepository implements AirportRepository
             ->setParameter('iata', $iata)
             ->getQuery()->getOneOrNullResult();
         if ($result === null) {
-            var_dump($iata);
-            exit;
+            throw AirportNotFound::forIata($iata);
         }
 
         Assert::notNull($result);
