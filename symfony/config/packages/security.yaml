@@ -1,0 +1,30 @@
+security:
+  password_hashers:
+    App\User\Entity\User:
+      algorithm: auto
+  providers:
+    # used to reload user from session & other features (e.g. switch_user)
+    app_user_provider:
+      entity:
+        class: App\User\Entity\User
+        property: email
+  firewalls:
+
+    login:
+      pattern:  ^/login
+      stateless: true
+      json_login:
+        check_path:               /login_check
+        success_handler:          lexik_jwt_authentication.handler.authentication_success
+        failure_handler:          lexik_jwt_authentication.handler.authentication_failure
+        username_path:            email
+
+    api:
+      pattern:   ^/auth
+      stateless: true
+      jwt: ~
+
+  access_control:
+  - { path: ^/login, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+  - { path: ^/auth,       roles: IS_AUTHENTICATED_FULLY }
+  - { path: ^/,       roles: IS_AUTHENTICATED_ANONYMOUSLY }

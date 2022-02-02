@@ -1,0 +1,5 @@
+symfony-variables.env
+mysql-variables.env
+/bakapot-be/**
+/bakapot-be
+.idea

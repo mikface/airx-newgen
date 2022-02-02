@@ -1,0 +1,53 @@
+version: '3'
+
+services:
+    db:
+        image: mysql:8
+        command: --default-authentication-plugin=mysql_native_password
+        volumes:
+            - "db_app:/var/lib/mysql"
+        env_file:
+            - mysql-variables.env
+        ports:
+            - 4306:3306
+        networks:
+            - symfony
+    php:
+        build:
+            context: .
+            dockerfile: docker/php/Dockerfile
+            args:
+                TIMEZONE: Europe/Prague
+        volumes:
+            - ./symfony/:/var/www/symfony/
+        env_file:
+            - symfony-variables.env
+        networks:
+            - symfony
+    nginx:
+        build:
+            context: .
+            dockerfile: docker/nginx/Dockerfile
+        environment:
+            VIRTUAL_HOST: symfony.localhost
+        volumes:
+            - ./symfony/:/var/www/symfony/
+        ports:
+            - 8081:80
+        networks:
+            - symfony
+    phpmyadmin:
+        image: phpmyadmin:latest
+        ports:
+            - 8082:80
+        depends_on:
+            - php
+        restart: unless-stopped
+        networks:
+            - symfony
+
+volumes:
+    db_app:
+
+networks:
+    symfony:
