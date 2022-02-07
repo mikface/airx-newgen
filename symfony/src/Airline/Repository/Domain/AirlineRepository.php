@@ -10,5 +10,7 @@ interface AirlineRepository
 {
     public function add(Airline $airline) : void;
 
-    public function findByIcao(string $icao) : Airline;
+    public function findByIcao(string $icao) : ?Airline;
+
+    public function getByIcao(string $icao) : Airline;
 }

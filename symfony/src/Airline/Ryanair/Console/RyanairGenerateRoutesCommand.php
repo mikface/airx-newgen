@@ -43,7 +43,7 @@ final class RyanairGenerateRoutesCommand extends Command
     {
         $io = new SymfonyStyle($input, $output);
         $allAirports = $this->airportRepository->getAll();
-        $ryanair = $this->airlineRepository->findByIcao(self::RYAINAIR_ICAO);
+        $ryanair = $this->airlineRepository->getByIcao(self::RYAINAIR_ICAO);
         $io->progressStart(intval(count($allAirports) / 100) + 1);
         for ($i = 0; $i < count($allAirports); $i++) {
             $currentAirportIata = $allAirports[$i]->getIata();

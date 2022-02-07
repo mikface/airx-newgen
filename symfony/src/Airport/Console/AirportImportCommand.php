@@ -28,7 +28,8 @@ use const PHP_EOL;
 )]
 final class AirportImportCommand extends Command
 {
-    private const AIRPORTS_CSV_URL = 'https://raw.githubusercontent.com/davidmegginson/ourairports-data/main/airports.csv';
+    private const AIRPORTS_CSV_URL =
+        'https://raw.githubusercontent.com/davidmegginson/ourairports-data/main/airports.csv';
     private const ALLOWED_AIRPORT_TYPES = ['medium_airport', 'large_airport'];
 
     public function __construct(private AirportRepository $airportRepository)

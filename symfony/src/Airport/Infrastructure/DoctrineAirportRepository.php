@@ -10,8 +10,6 @@ use App\Airport\Exception\AirportNotFound;
 use App\Core\Service\EntityManagerConstructor;
 use Webmozart\Assert\Assert;
 
-use function var_dump;
-
 final class DoctrineAirportRepository implements AirportRepository
 {
     use EntityManagerConstructor;
@@ -41,6 +39,7 @@ final class DoctrineAirportRepository implements AirportRepository
         return $result;
     }
 
+    /** @inheritdoc */
     public function getAll() : array
     {
         return $this->entityManager->createQueryBuilder()

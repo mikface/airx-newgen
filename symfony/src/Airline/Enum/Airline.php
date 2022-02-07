@@ -18,9 +18,10 @@ enum Airline: string
     case EASYJET_CH = 'Easyjet CH';
     case EASYJET_EU = 'Easyjet EU';
     case VUELING = 'Vueling';
+    case VOLOTEA = 'Volotea';
 
     /** @return array<string, string> */
-    public function getInfo(): array
+    public function getInfo() : array
     {
         return match ($this) {
             self::RYANAIR => ['fullName' => 'Ryanair DAC', 'iata' => 'FR', 'icao' => 'RYR'],
@@ -34,7 +35,8 @@ enum Airline: string
             self::EASYJET => ['fullName' => 'EasyJet UK', 'iata' => 'U2', 'icao' => 'EZY'],
             self::EASYJET_EU => ['fullName' => 'EasyJet Europe', 'iata' => 'EC', 'icao' => 'EJU'],
             self::EASYJET_CH => ['fullName' => 'EasyJet Switzerland', 'iata' => 'DS', 'icao' => 'EZS'],
-            self::VUELING => ['fullName' => 'Vueling S.A.', 'iata' => 'VY', 'icao' => 'VLG']
+            self::VUELING => ['fullName' => 'Vueling S.A.', 'iata' => 'VY', 'icao' => 'VLG'],
+            self::VOLOTEA => ['fullName' => 'Volotea', 'iata' => 'V7', 'icao' => 'VOE']
         };
     }
-}
+    }

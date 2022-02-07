@@ -41,7 +41,7 @@ final class WizzairGenerateRoutesCommand extends Command
             return Command::FAILURE;
         }
 
-        $airline = $this->airlineRepository->findByIcao(self::WIZZAIR_ICAO);
+        $airline = $this->airlineRepository->getByIcao(self::WIZZAIR_ICAO);
         foreach (Curl::performSingleGetAndDecode($apiUrl . self::ROUTES_ENDPOINT)['cities'] ?? [] as $city) {
             $airportA = $this->airportRepository->findByIata($city['iata']);
             foreach ($city['connections'] as $connection) {

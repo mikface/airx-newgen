@@ -27,7 +27,7 @@ class Airport
         'REK',
         'ROM',
         'STO',
-        'TCI'
+        'TCI',
     ];
 
     #[ORM\Id]

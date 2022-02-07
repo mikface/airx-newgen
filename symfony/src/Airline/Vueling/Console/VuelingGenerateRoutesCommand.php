@@ -11,11 +11,12 @@ use App\Core\Service\Curl;
 use App\Route\Repository\Domain\RouteRepository;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Style\SymfonyStyle;
+
+use function in_array;
+use function json_decode;
+use function preg_match;
 
 #[AsCommand(
     name: 'vueling:generate-routes',
@@ -29,15 +30,14 @@ final class VuelingGenerateRoutesCommand extends Command
     public function __construct(
         private AirlineRepository $airlineRepository,
         private AirportRepository $airportRepository,
-        private RouteRepository   $routeRepository
-    )
-    {
+        private RouteRepository $routeRepository
+    ) {
         parent::__construct();
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output): int
+    protected function execute(InputInterface $input, OutputInterface $output) : int
     {
-        $airline = $this->airlineRepository->findByIcao(self::VUELING_ICAO);
+        $airline = $this->airlineRepository->getByIcao(self::VUELING_ICAO);
         $airports = Curl::performSingleGet(self::DATA_URL);
         preg_match('/var JSonCities = (.*);/', $airports, $matches);
 
@@ -47,12 +47,14 @@ final class VuelingGenerateRoutesCommand extends Command
             if (in_array($airportAiata, Airport::METROPOLITAN_IATAS, true)) {
                 continue;
             }
+
             $airportA = $this->airportRepository->findByIata($airportAiata);
             foreach ($city['conForDest'] as $connection) {
                 $airportBiata = $connection['dest'];
                 if ($connection['con'] !== '' || in_array($airportBiata, Airport::METROPOLITAN_IATAS, true)) {
                     continue;
                 }
+
                 $airportB = $this->airportRepository->findByIata($airportBiata);
                 $this->routeRepository->addIfNotExists($airline, $airportA, $airportB);
             }

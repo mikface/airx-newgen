@@ -19,14 +19,19 @@ final class DoctrineAirlineRepository implements AirlineRepository
         $this->entityManager->flush();
     }
 
-    public function findByIcao(string $icao) : Airline
+    public function findByIcao(string $icao) : ?Airline
     {
-        $result = $this->entityManager->createQueryBuilder()
+        return $this->entityManager->createQueryBuilder()
             ->select('a')
             ->from(Airline::class, 'a')
             ->where('a.icao = :icao')
             ->setParameter('icao', $icao)
             ->getQuery()->getOneOrNullResult();
+    }
+
+    public function getByIcao(string $icao) : Airline
+    {
+        $result = $this->findByIcao($icao);
         Assert::notNull($result);
 
         return $result;
