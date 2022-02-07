@@ -24,7 +24,7 @@ use function sprintf;
 #[AsCommand(
     name: 'airline:ryanair:generate-routes',
 )]
-final class RyanairGenerateRoutesCommand extends Command
+final class GenerateRoutesCommand extends Command
 {
     private const BATCH_SIZE = 100;
     private const RYAINAIR_ICAO = 'RYR';

@@ -23,7 +23,7 @@ use function str_starts_with;
 #[AsCommand(
     name: 'easyjet:generate-routes',
 )]
-final class EasyjetGenerateRoutesCommand extends Command
+final class GenerateRoutesCommand extends Command
 {
     private const DATA_URL = 'https://www.easyjet.com/EN/linkedAirportsJSON';
     private const EASYJET_ICAO = 'EZY';

@@ -22,7 +22,7 @@ use function preg_match;
     name: 'vueling:generate-routes',
     description: 'Add a short description for your command',
 )]
-final class VuelingGenerateRoutesCommand extends Command
+final class GenerateRoutesCommand extends Command
 {
     private const DATA_URL = 'https://www.vueling.com/en/book-your-flight/where-we-fly';
     private const VUELING_ICAO = 'VLG';

@@ -18,7 +18,7 @@ use const PHP_EOL;
 #[AsCommand(
     name: 'wizzair:generate-routes'
 )]
-final class WizzairGenerateRoutesCommand extends Command
+final class GenerateRoutesCommand extends Command
 {
     private const WIZZAIR_ICAO = 'WZZ';
     private const METADATA_URL = 'https://wizzair.com/static_fe/metadata.json';
