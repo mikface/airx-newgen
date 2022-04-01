@@ -12,12 +12,15 @@ use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Style\SymfonyStyle;
 
 #[AsCommand(
-    name: 'volotea:generate-routes'
+    name: self::COMMAND_NAME
 )]
 final class GenerateRoutesCommand extends Command
 {
+    public const COMMAND_NAME = 'airline:volotea:generate-routes';
+
     private const URL = 'https://json.volotea.com/dist/stations/stations.json';
     private const VOLOTEA_ICAO = 'VOE';
 
@@ -31,6 +34,8 @@ final class GenerateRoutesCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output) : int
     {
+        $io = new SymfonyStyle($input, $output);
+        $io->note('Starting Volotea route import...');
         $airline = $this->airlineRepository->getByIcao(self::VOLOTEA_ICAO);
 
         foreach (Curl::performSingleGetAndDecode(self::URL) as $fromIata => $airport) {

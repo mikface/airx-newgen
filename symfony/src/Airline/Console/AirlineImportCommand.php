@@ -11,12 +11,15 @@ use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Style\SymfonyStyle;
 
 #[AsCommand(
-    name: 'airline:import',
+    name: self::COMMAND_NAME,
 )]
 final class AirlineImportCommand extends Command
 {
+    public const COMMAND_NAME = 'airline:import';
+
     public function __construct(private AirlineRepository $airlineRepository)
     {
         parent::__construct();
@@ -24,6 +27,8 @@ final class AirlineImportCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output) : int
     {
+        $io = new SymfonyStyle($input, $output);
+        $io->note('Starting airline import...');
         foreach (AirlineEnum::cases() as $case) {
             $airline = $this->airlineRepository->findByIcao($case->getInfo()['icao']);
             if ($airline === null) {

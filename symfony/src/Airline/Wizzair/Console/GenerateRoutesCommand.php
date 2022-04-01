@@ -12,14 +12,17 @@ use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Style\SymfonyStyle;
 
 use const PHP_EOL;
 
 #[AsCommand(
-    name: 'wizzair:generate-routes'
+    name: self::COMMAND_NAME
 )]
 final class GenerateRoutesCommand extends Command
 {
+    public const COMMAND_NAME = 'airline:wizzair:generate-routes';
+
     private const WIZZAIR_ICAO = 'WZZ';
     private const METADATA_URL = 'https://wizzair.com/static_fe/metadata.json';
     private const ROUTES_ENDPOINT = '/asset/map';
@@ -34,6 +37,8 @@ final class GenerateRoutesCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output) : int
     {
+        $io = new SymfonyStyle($input, $output);
+        $io->note('Starting Wizzair route import...');
         $apiUrl = $this->getApiUrl();
         if ($apiUrl === null) {
             echo 'WIZZAIR METADATA ERROR' . PHP_EOL;

@@ -23,11 +23,13 @@ use function strlen;
 use const PHP_EOL;
 
 #[AsCommand(
-    name: 'airport:import',
+    name: self::COMMAND_NAME,
     description: 'Import airports',
 )]
 final class AirportImportCommand extends Command
 {
+    public const COMMAND_NAME = 'airport:import';
+
     private const AIRPORTS_CSV_URL =
         'https://raw.githubusercontent.com/davidmegginson/ourairports-data/main/airports.csv';
     private const ALLOWED_AIRPORT_TYPES = ['medium_airport', 'large_airport'];
@@ -40,6 +42,7 @@ final class AirportImportCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output) : int
     {
         $io = new SymfonyStyle($input, $output);
+        $io->note('Starting airport import...');
         $lines = explode(PHP_EOL, file_get_contents(self::AIRPORTS_CSV_URL));
         array_shift($lines);
         $io->progressStart(count($lines));

@@ -22,10 +22,12 @@ use function json_decode;
 use function sprintf;
 
 #[AsCommand(
-    name: 'airline:ryanair:generate-routes',
+    name: self::COMMAND_NAME,
 )]
 final class GenerateRoutesCommand extends Command
 {
+    public const COMMAND_NAME = 'airline:ryanair:generate-routes';
+
     private const BATCH_SIZE = 100;
     private const RYAINAIR_ICAO = 'RYR';
     private const URL = 'https://www.ryanair.com/api/locate/v1/autocomplete/routes?arrivalPhrase=&departurePhrase=%s';
@@ -42,6 +44,7 @@ final class GenerateRoutesCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output) : int
     {
         $io = new SymfonyStyle($input, $output);
+        $io->note('Starting Ryanair route import...');
         $allAirports = $this->airportRepository->getAll();
         $ryanair = $this->airlineRepository->getByIcao(self::RYAINAIR_ICAO);
         $io->progressStart(intval(count($allAirports) / 100) + 1);

@@ -1,5 +1,7 @@
 <?php
 
+// phpcs:ignoreFile
+/** FIXME - cs ignore */
 declare(strict_types=1);
 
 namespace App\Airline\Enum;
