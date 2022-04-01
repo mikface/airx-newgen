@@ -8,7 +8,6 @@ use App\Airport\Domain\AirportRepository;
 use App\Airport\Entity\Airport;
 use App\Airport\Exception\AirportNotFound;
 use App\Core\Service\EntityManagerConstructor;
-use Webmozart\Assert\Assert;
 
 final class DoctrineAirportRepository implements AirportRepository
 {
@@ -20,26 +19,23 @@ final class DoctrineAirportRepository implements AirportRepository
         $this->entityManager->flush();
     }
 
-    public function findByIata(string $iata) : Airport
+    public function findByIata(string $iata) : ?Airport
     {
         $iata = Airport::MULTI_IATA_MAP[$iata] ?? $iata;
 
-        $result = $this->entityManager->createQueryBuilder()
+        return $this->entityManager->createQueryBuilder()
             ->select('a')
             ->from(Airport::class, 'a')
             ->where('a.iata = :iata')
             ->setParameter('iata', $iata)
             ->getQuery()->getOneOrNullResult();
-        if ($result === null) {
-            throw AirportNotFound::forIata($iata);
-        }
-
-        Assert::notNull($result);
-
-        return $result;
     }
 
-    /** @inheritdoc */
+    public function getByIata(string $iata) : Airport
+    {
+        return $this->findByIata($iata) ?? throw AirportNotFound::forIata($iata);
+    }
+
     public function getAll() : array
     {
         return $this->entityManager->createQueryBuilder()

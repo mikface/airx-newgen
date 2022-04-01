@@ -53,14 +53,14 @@ final class GenerateRoutesCommand extends Command
                 continue;
             }
 
-            $airportA = $this->airportRepository->findByIata($airportAiata);
+            $airportA = $this->airportRepository->getByIata($airportAiata);
             foreach ($city['conForDest'] as $connection) {
                 $airportBiata = $connection['dest'];
                 if ($connection['con'] !== '' || in_array($airportBiata, Airport::METROPOLITAN_IATAS, true)) {
                     continue;
                 }
 
-                $airportB = $this->airportRepository->findByIata($airportBiata);
+                $airportB = $this->airportRepository->getByIata($airportBiata);
                 $this->routeRepository->addIfNotExists($airline, $airportA, $airportB);
             }
         }

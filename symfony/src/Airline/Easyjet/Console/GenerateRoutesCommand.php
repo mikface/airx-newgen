@@ -52,8 +52,8 @@ final class GenerateRoutesCommand extends Command
                 continue;
             }
 
-            $airportA = $this->airportRepository->findByIata($parts[0]);
-            $airportB = $this->airportRepository->findByIata($parts[1]);
+            $airportA = $this->airportRepository->getByIata($parts[0]);
+            $airportB = $this->airportRepository->getByIata($parts[1]);
             $this->routeRepository->addIfNotExists($airline, $airportA, $airportB);
         }
 

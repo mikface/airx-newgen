@@ -44,13 +44,13 @@ final class GenerateRoutesCommand extends Command
                 continue;
             }
 
-            $airportA = $this->airportRepository->findByIata($fromIata);
+            $airportA = $this->airportRepository->getByIata($fromIata);
             foreach ($markets as $toIata => $market) {
                 if ($market['Enabled'] !== true || $market['IsConnectionMarket'] !== false) {
                     continue;
                 }
 
-                $airportB = $this->airportRepository->findByIata($toIata);
+                $airportB = $this->airportRepository->getByIata($toIata);
                 $this->routeRepository->addIfNotExists($airline, $airportA, $airportB);
             }
         }

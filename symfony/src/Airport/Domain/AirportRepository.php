@@ -12,6 +12,8 @@ interface AirportRepository
 
     public function findByIata(string $iata) : Airport|null;
 
+    public function getByIata(string $iata) : Airport;
+
     /** @return list<Airport> */
     public function getAll() : array;
 }

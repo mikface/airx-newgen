@@ -48,9 +48,9 @@ final class GenerateRoutesCommand extends Command
 
         $airline = $this->airlineRepository->getByIcao(self::WIZZAIR_ICAO);
         foreach (Curl::performSingleGetAndDecode($apiUrl . self::ROUTES_ENDPOINT)['cities'] ?? [] as $city) {
-            $airportA = $this->airportRepository->findByIata($city['iata']);
+            $airportA = $this->airportRepository->getByIata($city['iata']);
             foreach ($city['connections'] as $connection) {
-                $airportB = $this->airportRepository->findByIata($connection['iata']);
+                $airportB = $this->airportRepository->getByIata($connection['iata']);
                 $this->routeRepository->addIfNotExists($airline, $airportA, $airportB);
             }
         }

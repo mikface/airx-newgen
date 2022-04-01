@@ -68,7 +68,7 @@ final class GenerateRoutesCommand extends Command
     private function saveRoutes(Airline $airline, array $routes) : void
     {
         foreach ($routes as $airportACode => $oneAirportRoutes) {
-            $airportA = $this->airportRepository->findByIata($airportACode);
+            $airportA = $this->airportRepository->getByIata($airportACode);
             $oneAirportRoutes = json_decode($oneAirportRoutes, true);
             if ($oneAirportRoutes === []) {
                 continue;
@@ -79,7 +79,7 @@ final class GenerateRoutesCommand extends Command
                     continue;
                 }
 
-                $airportB = $this->airportRepository->findByIata($oneAirportRoute['arrivalAirport']['code']);
+                $airportB = $this->airportRepository->getByIata($oneAirportRoute['arrivalAirport']['code']);
                 $this->routeRepository->addIfNotExists($airline, $airportA, $airportB);
             }
         }
