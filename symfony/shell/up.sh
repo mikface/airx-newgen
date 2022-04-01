@@ -2,6 +2,12 @@
 if [ ! -f "./.env" ]; then
   touch .env
 fi
+
+if [ ! -d "./src/Entity" ]; then
+  echo 1
+  mkdir ./src/Entity
+fi
+
 composer install
 if [ $?  -ne 0 ]; then
   echo "Composer failed"
