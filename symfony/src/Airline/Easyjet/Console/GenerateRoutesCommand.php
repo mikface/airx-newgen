@@ -14,6 +14,7 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
+use Symfony\Component\Console\Style\SymfonyStyle;
 use function explode;
 use function json_decode;
 use function preg_match;
@@ -40,6 +41,8 @@ final class GenerateRoutesCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output) : int
     {
+        $io = new SymfonyStyle($input, $output);
+        $io->note('Starting Easyjet route import...');
         $airline = $this->airlineRepository->getByIcao(self::EASYJET_ICAO);
         $airports = Curl::performSingleGet(self::DATA_URL);
         preg_match('/^var ac_la = (.*);/', $airports, $matches);
