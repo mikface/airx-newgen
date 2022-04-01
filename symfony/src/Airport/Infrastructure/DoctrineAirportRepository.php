@@ -36,6 +36,7 @@ final class DoctrineAirportRepository implements AirportRepository
         return $this->findByIata($iata) ?? throw AirportNotFound::forIata($iata);
     }
 
+    /** @inheritDoc */
     public function getAll() : array
     {
         return $this->entityManager->createQueryBuilder()

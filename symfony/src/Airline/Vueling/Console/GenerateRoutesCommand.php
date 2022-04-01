@@ -40,7 +40,11 @@ final class GenerateRoutesCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output) : int
     {
         $io = new SymfonyStyle($input, $output);
-        $io->note('Starting Volotea route import...');
+        $io->note('Starting Vueling route import...');
+        /** FIXME */
+        $io->note('FIXME');
+
+        return Command::FAILURE;
 
         $airline = $this->airlineRepository->getByIcao(self::VUELING_ICAO);
         $airports = Curl::performSingleGet(self::DATA_URL);
