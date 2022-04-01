@@ -30,15 +30,16 @@ final class AirlineImportCommand extends Command
         $io = new SymfonyStyle($input, $output);
         $io->note('Starting airline import...');
         foreach (AirlineEnum::cases() as $case) {
-            $airline = $this->airlineRepository->findByIcao($case->getInfo()['icao']);
+            $airlineInfo = $case->getInfo();
+            $airline = $this->airlineRepository->findByIcao($airlineInfo->icao);
             if ($airline === null) {
                 $airline = new Airline();
             }
 
             $airline->setName($case->value);
-            $airline->setIata($case->getInfo()['iata']);
-            $airline->setIcao($case->getInfo()['icao']);
-            $airline->setFullName($case->getInfo()['fullName']);
+            $airline->setIata($airlineInfo->iata);
+            $airline->setIcao($airlineInfo->icao);
+            $airline->setFullName($airlineInfo->fullName);
             $this->airlineRepository->add($airline);
         }
 

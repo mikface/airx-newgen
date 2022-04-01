@@ -6,6 +6,8 @@ declare(strict_types=1);
 
 namespace App\Airline\Enum;
 
+use App\Airline\Value\AirlineInfo;
+
 enum Airline: string
 {
     case RYANAIR = 'Ryanair';
@@ -22,23 +24,22 @@ enum Airline: string
     case VUELING = 'Vueling';
     case VOLOTEA = 'Volotea';
 
-    /** @return array<string, string> */
-    public function getInfo() : array
+    public function getInfo() : AirlineInfo
     {
         return match ($this) {
-            self::RYANAIR => ['fullName' => 'Ryanair DAC', 'iata' => 'FR', 'icao' => 'RYR'],
-            self::BUZZ => ['fullName' => 'Buzz', 'iata' => 'RR', 'icao' => 'RYS'],
-            self::LAUDA => ['fullName' => 'Laudamotion GmbH', 'iata' => 'OE', 'icao' => 'LDM'],
-            self::MALTA_AIR => ['fullName' => 'Malta air', 'iata' => 'AL', 'icao' => 'MAY'],
-            self::RYANAIR_UK => ['fullName' => 'Ryanair UK', 'iata' => 'RK', 'icao' => 'RUK'],
-            self::WIZZAIR => ['fullName' => 'Wizz Air Hungary Ltd.', 'iata' => 'W6', 'icao' => 'WZZ'],
-            self::WIZZAIR_UAE => ['fullName' => 'Wizz Air Abu Dhabi', 'iata' => '5W', 'icao' => 'WAZ'],
-            self::WIZZAIR_UK => ['fullName' => 'Wizz Air UK Ltd.', 'iata' => 'W9', 'icao' => 'WUK'],
-            self::EASYJET => ['fullName' => 'EasyJet UK', 'iata' => 'U2', 'icao' => 'EZY'],
-            self::EASYJET_EU => ['fullName' => 'EasyJet Europe', 'iata' => 'EC', 'icao' => 'EJU'],
-            self::EASYJET_CH => ['fullName' => 'EasyJet Switzerland', 'iata' => 'DS', 'icao' => 'EZS'],
-            self::VUELING => ['fullName' => 'Vueling S.A.', 'iata' => 'VY', 'icao' => 'VLG'],
-            self::VOLOTEA => ['fullName' => 'Volotea', 'iata' => 'V7', 'icao' => 'VOE']
+            self::RYANAIR => new AirlineInfo('Ryanair DAC', 'FR', 'RYR'),
+            self::BUZZ =>  new AirlineInfo('Buzz', 'RR', 'RYS'),
+            self::LAUDA =>  new AirlineInfo('Laudamotion GmbH', 'OE', 'LDM'),
+            self::MALTA_AIR =>  new AirlineInfo('Malta air', 'AL', 'MAY'),
+            self::RYANAIR_UK =>  new AirlineInfo('Ryanair UK', 'RK', 'RUK'),
+            self::WIZZAIR =>  new AirlineInfo('Wizz Air Hungary Ltd.', 'W6', 'WZZ'),
+            self::WIZZAIR_UAE =>  new AirlineInfo('Wizz Air Abu Dhabi', '5W', 'WAZ'),
+            self::WIZZAIR_UK =>  new AirlineInfo('Wizz Air UK Ltd.', 'W9', 'WUK'),
+            self::EASYJET =>  new AirlineInfo('EasyJet UK', 'U2', 'EZY'),
+            self::EASYJET_EU =>  new AirlineInfo('EasyJet Europe', 'EC', 'EJU'),
+            self::EASYJET_CH =>  new AirlineInfo('EasyJet Switzerland', 'DS', 'EZS'),
+            self::VUELING =>  new AirlineInfo('Vueling S.A.', 'VY', 'VLG'),
+            self::VOLOTEA =>  new AirlineInfo('Volotea', 'V7', 'VOE'),
         };
     }
     }
