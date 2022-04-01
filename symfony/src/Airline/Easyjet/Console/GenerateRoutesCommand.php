@@ -21,10 +21,12 @@ use function str_replace;
 use function str_starts_with;
 
 #[AsCommand(
-    name: 'easyjet:generate-routes',
+    name: self::COMMAND_NAME,
 )]
 final class GenerateRoutesCommand extends Command
 {
+    public const COMMAND_NAME = 'easyjet:generate-routes';
+
     private const DATA_URL = 'https://www.easyjet.com/EN/linkedAirportsJSON';
     private const EASYJET_ICAO = 'EZY';
 

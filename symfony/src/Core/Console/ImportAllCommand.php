@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Core\Console;
 
 use App\Airline\Console\AirlineImportCommand;
+use App\Airline\Easyjet\Console\GenerateRoutesCommand as EasyjetRoutesCommand;
 use App\Airline\Ryanair\Console\GenerateRoutesCommand as RyanairRoutesCommand;
 use App\Airline\Volotea\Console\GenerateRoutesCommand as VoloteaRoutesCommand;
 use App\Airline\Vueling\Console\GenerateRoutesCommand as VuelingRoutesCommand;
@@ -25,6 +26,7 @@ final class ImportAllCommand extends Command
     {
         $this->getApplication()->find(AirlineImportCommand::COMMAND_NAME)->run($input, $output);
         $this->getApplication()->find(AirportImportCommand::COMMAND_NAME)->run($input, $output);
+        $this->getApplication()->find(EasyjetRoutesCommand::COMMAND_NAME)->run($input, $output);
         $this->getApplication()->find(RyanairRoutesCommand::COMMAND_NAME)->run($input, $output);
         $this->getApplication()->find(VoloteaRoutesCommand::COMMAND_NAME)->run($input, $output);
         $this->getApplication()->find(VuelingRoutesCommand::COMMAND_NAME)->run($input, $output);
