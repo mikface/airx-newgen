@@ -23,7 +23,7 @@ final class MultiCurl
 {
     private CurlMultiHandle $curl;
 
-    /** @var list<CurlHandle> */
+    /** @var array<int|string, CurlHandle> */
     private array $handles = [];
 
     public function __construct()
@@ -31,7 +31,7 @@ final class MultiCurl
         $this->curl = curl_multi_init();
     }
 
-    public function addHandle(CurlHandle $curlHandle, ?string $key = null) : void
+    public function addHandle(CurlHandle $curlHandle, ?string $key = null): void
     {
         if ($key === null) {
             $key = count($this->handles);
@@ -45,8 +45,8 @@ final class MultiCurl
         $this->handles[$key] = $curlHandle;
     }
 
-    /** @return list<string> */
-    public function execute() : array
+    /** @return array<int|string, string> */
+    public function execute(): array
     {
         $running = null;
         do {
@@ -55,8 +55,10 @@ final class MultiCurl
 
         foreach ($this->handles as $key => $handle) {
             $returnCode = curl_getinfo($handle, CURLINFO_HTTP_CODE);
+            $url = curl_getinfo($handle, CURLINFO_EFFECTIVE_URL);
             if ($returnCode !== 200) {
-                echo 'WRONG RETURN CODE: ' . $returnCode;
+                echo 'WRONG RETURN CODE: ' . $returnCode . PHP_EOL;
+                echo 'URL: ' . $url . PHP_EOL;
                 exit;
             }
 

@@ -11,4 +11,6 @@ interface RateRepository
     public function add(Rate $rate) : void;
 
     public function findByCode(string $code) : Rate|null;
+
+    public function getByCode(string $code) : Rate;
 }

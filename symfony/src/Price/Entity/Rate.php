@@ -12,6 +12,8 @@ use Ramsey\Uuid\UuidInterface;
 #[ORM\UniqueConstraint(name: 'uniq_code', columns: ['currency_code'])]
 class Rate
 {
+    public const BASE_CURRENCY = 'EUR';
+
     #[ORM\Id]
     #[ORM\Column(type: 'uuid')]
     private UuidInterface $id;
@@ -27,19 +29,19 @@ class Rate
         $this->id = Uuid::uuid4();
     }
 
-    public function setCurrencyCode(string $currencyCode): self
+    public function setCurrencyCode(string $currencyCode) : self
     {
         $this->currencyCode = $currencyCode;
 
         return $this;
     }
 
-    public function getRate(): float
+    public function getRate() : float
     {
         return $this->rate;
     }
 
-    public function setRate(float $rate): self
+    public function setRate(float $rate) : self
     {
         $this->rate = $rate;
 

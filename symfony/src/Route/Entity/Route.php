@@ -38,6 +38,11 @@ class Route
         $this->airportB = $airportB;
     }
 
+    public function getId() : UuidInterface
+    {
+        return $this->id;
+    }
+
     public function getAirline() : ?Airline
     {
         return $this->airline;

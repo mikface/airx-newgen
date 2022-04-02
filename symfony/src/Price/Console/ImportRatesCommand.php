@@ -17,15 +17,14 @@ use Symfony\Component\Console\Output\OutputInterface;
 )]
 final class ImportRatesCommand extends Command
 {
-    private const API_URL = 'https://api.currencyapi.com/v3/latest?base_currency=' . self::BASE_CURRENCY . '&apikey=';
-    private const BASE_CURRENCY = 'EUR';
+    private const API_URL = 'https://api.currencyapi.com/v3/latest?base_currency=' . Rate::BASE_CURRENCY . '&apikey=';
 
     public function __construct(private RateRepository $rateRepository)
     {
         parent::__construct();
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output) : int
     {
         $rates = Curl::performSingleGetAndDecode(self::API_URL . $_ENV['CURRENCY_API_KEY']);
         foreach ($rates['data'] as $currencyCode => $data) {

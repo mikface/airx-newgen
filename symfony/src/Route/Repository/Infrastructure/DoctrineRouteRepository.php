@@ -8,6 +8,7 @@ use App\Airline\Entity\Airline;
 use App\Airport\Entity\Airport;
 use App\Core\Service\EntityManagerConstructor;
 use App\Route\Entity\Route;
+use App\Route\Exception\RouteNotFound;
 use App\Route\Repository\Domain\RouteRepository;
 
 final class DoctrineRouteRepository implements RouteRepository
@@ -18,6 +19,17 @@ final class DoctrineRouteRepository implements RouteRepository
     {
         $this->entityManager->persist($route);
         $this->entityManager->flush();
+    }
+
+    /** @inheritDoc */
+    public function findByAirline(Airline $airline) : array
+    {
+        return $this->entityManager->createQueryBuilder()
+            ->select('r')
+            ->from(Route::class, 'r')
+            ->where('r.airline = :airline')
+            ->setParameter('airline', $airline)
+            ->getQuery()->getResult();
     }
 
     public function findByAirlineAndAirports(Airline $airline, Airport $airportA, Airport $airportB) : Route|null
@@ -54,5 +66,17 @@ final class DoctrineRouteRepository implements RouteRepository
         }
 
         $this->add(new Route($airline, $airportA, $airportB));
+    }
+
+    public function get(string $id) : Route
+    {
+        $result = $this->entityManager->createQueryBuilder()
+            ->select('route')
+            ->from(Route::class, 'route')
+            ->where('route.id = :id')
+            ->setParameter('id', $id)
+            ->getQuery()->getOneOrNullResult();
+
+        return $result ?? throw RouteNotFound::forId($id);
     }
 }
