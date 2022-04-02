@@ -1,0 +1,8 @@
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        public: false
+
+    Lcobucci\Clock\Clock:
+        factory: ['Lcobucci\Clock\SystemClock', 'fromSystemTimezone']
