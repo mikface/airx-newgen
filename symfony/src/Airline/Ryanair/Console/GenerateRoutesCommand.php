@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Airline\Ryanair\Console;
 
 use App\Airline\Entity\Airline;
+use App\Airline\Enum\Airline as AirlineEnum;
 use App\Airline\Repository\Domain\AirlineRepository;
 use App\Airport\Domain\AirportRepository;
 use App\Core\Service\Curl;
@@ -29,7 +30,6 @@ final class GenerateRoutesCommand extends Command
     public const COMMAND_NAME = 'airline:ryanair:generate-routes';
 
     private const BATCH_SIZE = 100;
-    private const RYAINAIR_ICAO = 'RYR';
     private const URL = 'https://www.ryanair.com/api/locate/v1/autocomplete/routes?arrivalPhrase=&departurePhrase=%s';
 
     public function __construct(
@@ -46,13 +46,13 @@ final class GenerateRoutesCommand extends Command
         $io = new SymfonyStyle($input, $output);
         $io->note('Starting Ryanair route import...');
         $allAirports = $this->airportRepository->getAll();
-        $ryanair = $this->airlineRepository->getByIcao(self::RYAINAIR_ICAO);
+        $airline = $this->airlineRepository->getByIcao(AirlineEnum::RYANAIR->getInfo()->icao);
         $io->progressStart(intval(count($allAirports) / 100) + 1);
         for ($i = 0; $i < count($allAirports); $i++) {
             $currentAirportIata = $allAirports[$i]->getIata();
             if ($i % self::BATCH_SIZE === 0) {
                 $io->progressAdvance();
-                $this->saveRoutes($ryanair, $this->multiCurl->execute());
+                $this->saveRoutes($airline, $this->multiCurl->execute());
             }
 
             $url = sprintf(self::URL, $currentAirportIata);

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Airline\Vueling\Console;
 
+use App\Airline\Enum\Airline;
 use App\Airline\Repository\Domain\AirlineRepository;
 use App\Airport\Domain\AirportRepository;
 use App\Airport\Entity\Airport;
@@ -27,7 +28,6 @@ final class GenerateRoutesCommand extends Command
     public const COMMAND_NAME = 'airline:vueling:generate-routes';
 
     private const DATA_URL = 'https://www.vueling.com/en/book-your-flight/where-we-fly';
-    private const VUELING_ICAO = 'VLG';
 
     public function __construct(
         private AirlineRepository $airlineRepository,
@@ -46,7 +46,7 @@ final class GenerateRoutesCommand extends Command
 
         return Command::FAILURE;
 
-        $airline = $this->airlineRepository->getByIcao(self::VUELING_ICAO);
+        $airline = $this->airlineRepository->getByIcao(Airline::VUELING->getInfo()->icao);
         $airports = Curl::performSingleGet(self::DATA_URL);
         preg_match('/var JSonCities = (.*);/', $airports, $matches);
 

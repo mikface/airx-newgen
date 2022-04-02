@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Airline\Easyjet\Console;
 
+use App\Airline\Enum\Airline;
 use App\Airline\Repository\Domain\AirlineRepository;
 use App\Airport\Domain\AirportRepository;
 use App\Core\Service\Curl;
@@ -29,7 +30,6 @@ final class GenerateRoutesCommand extends Command
     public const COMMAND_NAME = 'easyjet:generate-routes';
 
     private const DATA_URL = 'https://www.easyjet.com/EN/linkedAirportsJSON';
-    private const EASYJET_ICAO = 'EZY';
 
     public function __construct(
         private AirlineRepository $airlineRepository,
@@ -43,7 +43,7 @@ final class GenerateRoutesCommand extends Command
     {
         $io = new SymfonyStyle($input, $output);
         $io->note('Starting Easyjet route import...');
-        $airline = $this->airlineRepository->getByIcao(self::EASYJET_ICAO);
+        $airline = $this->airlineRepository->getByIcao(Airline::EASYJET->getInfo()->icao);
         $airports = Curl::performSingleGet(self::DATA_URL);
         preg_match('/^var ac_la = (.*);/', $airports, $matches);
         $airportJsonString = str_replace("'", '"', $matches[1]);

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Airline\Wizzair\Console;
 
+use App\Airline\Enum\Airline;
 use App\Airline\Repository\Domain\AirlineRepository;
 use App\Airport\Domain\AirportRepository;
 use App\Core\Service\Curl;
@@ -23,7 +24,6 @@ final class GenerateRoutesCommand extends Command
 {
     public const COMMAND_NAME = 'airline:wizzair:generate-routes';
 
-    private const WIZZAIR_ICAO = 'WZZ';
     private const METADATA_URL = 'https://wizzair.com/static_fe/metadata.json';
     private const ROUTES_ENDPOINT = '/asset/map';
 
@@ -46,7 +46,7 @@ final class GenerateRoutesCommand extends Command
             return Command::FAILURE;
         }
 
-        $airline = $this->airlineRepository->getByIcao(self::WIZZAIR_ICAO);
+        $airline = $this->airlineRepository->getByIcao(Airline::WIZZAIR->getInfo()->icao);
         foreach (Curl::performSingleGetAndDecode($apiUrl . self::ROUTES_ENDPOINT)['cities'] ?? [] as $city) {
             $airportA = $this->airportRepository->getByIata($city['iata']);
             foreach ($city['connections'] as $connection) {
