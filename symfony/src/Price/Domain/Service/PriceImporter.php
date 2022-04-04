@@ -43,6 +43,5 @@ final class PriceImporter
 
             $this->priceRepository->add($price);
         }
-        exit;
     }
 }

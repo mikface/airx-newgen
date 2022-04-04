@@ -17,7 +17,9 @@ use function curl_multi_getcontent;
 use function curl_multi_init;
 use function curl_multi_remove_handle;
 
+use const CURLINFO_EFFECTIVE_URL;
 use const CURLINFO_HTTP_CODE;
+use const PHP_EOL;
 
 final class MultiCurl
 {
@@ -31,7 +33,7 @@ final class MultiCurl
         $this->curl = curl_multi_init();
     }
 
-    public function addHandle(CurlHandle $curlHandle, ?string $key = null): void
+    public function addHandle(CurlHandle $curlHandle, ?string $key = null) : void
     {
         if ($key === null) {
             $key = count($this->handles);
@@ -46,7 +48,7 @@ final class MultiCurl
     }
 
     /** @return array<int|string, string> */
-    public function execute(): array
+    public function execute() : array
     {
         $running = null;
         do {
@@ -59,7 +61,8 @@ final class MultiCurl
             if ($returnCode !== 200) {
                 echo 'WRONG RETURN CODE: ' . $returnCode . PHP_EOL;
                 echo 'URL: ' . $url . PHP_EOL;
-                exit;
+
+                continue;
             }
 
             $results[$key] = curl_multi_getcontent($handle);

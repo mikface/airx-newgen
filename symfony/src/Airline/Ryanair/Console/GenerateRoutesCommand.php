@@ -47,7 +47,7 @@ final class GenerateRoutesCommand extends Command
         $io->note('Starting Ryanair route import...');
         $allAirports = $this->airportRepository->getAll();
         $airline = $this->airlineRepository->getByIcao(AirlineEnum::RYANAIR->getInfo()->icao);
-        $io->progressStart(intval(count($allAirports) / 100) + 1);
+        $io->progressStart(intval(count($allAirports) / self::BATCH_SIZE) + 1);
         for ($i = 0; $i < count($allAirports); $i++) {
             $currentAirportIata = $allAirports[$i]->getIata();
             if ($i % self::BATCH_SIZE === 0) {

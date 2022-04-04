@@ -14,14 +14,20 @@ use function json_decode;
 use function str_starts_with;
 use function substr;
 
+use const CURLOPT_PROXY;
+use const CURLOPT_PROXYUSERPWD;
 use const CURLOPT_RETURNTRANSFER;
 
 final class Curl
 {
-    public static function getFromUrl(string $url) : CurlHandle
+    public static function getFromUrl(string $url, bool $useProxy = false) : CurlHandle
     {
         $ch = curl_init($url);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        if ($useProxy === true) {
+            curl_setopt($ch, CURLOPT_PROXY, $_ENV['CURL_PROXY']);
+            curl_setopt($ch, CURLOPT_PROXYUSERPWD, $_ENV['CURL_PROXY_AUTH']);
+        }
 
         return $ch;
     }
