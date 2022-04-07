@@ -7,9 +7,9 @@ namespace App\Airline\Ryanair\Console;
 use App\Airline\Enum\Airline;
 use App\Airline\Repository\Domain\AirlineRepository;
 use App\Core\Service\Curl;
+use App\Core\Service\MultiCurl;
 use App\Price\Domain\DTO\Price;
 use App\Price\Domain\Service\PriceImporter;
-use App\Route\Entity\Route;
 use App\Route\Enum\RouteDirection;
 use App\Route\Repository\Domain\RouteRepository;
 use DateInterval;
@@ -31,6 +31,7 @@ use function usleep;
 final class GetPricesCommand extends Command
 {
     private const GENERATION_WEEKS_FORWARD = 13;
+    private const BATCH_SIZE = 10;
     private const GENERATION_INTERVAL = 'P' . self::GENERATION_WEEKS_FORWARD . 'W';
     private const INTERVAL = 'P7D';
     private const START_INTERVAL = 'P3D';
@@ -42,6 +43,7 @@ final class GetPricesCommand extends Command
     public function __construct(
         private AirlineRepository $airlineRepository,
         private Clock $clock,
+        private MultiCurl $multiCurl,
         private PriceImporter $priceImporter,
         private RouteRepository $routeRepository
     ) {
@@ -58,8 +60,14 @@ final class GetPricesCommand extends Command
         $airline = $this->airlineRepository->findByIcao(Airline::RYANAIR->getInfo()->icao);
         $allRoutes = $this->routeRepository->findByAirline($airline);
         $io->progressStart(count($allRoutes) * self::GENERATION_WEEKS_FORWARD);
+        $batchCount = 0;
         while ($now < $stopDate) {
             foreach ($allRoutes as $route) {
+                if (($batchCount > 0) && ($batchCount % self::BATCH_SIZE === 0)) {
+                    $this->savePrices($this->multiCurl->execute());
+                    sleep(2);
+                }
+
                 $io->progressAdvance();
 
                 $stringDate = $now->format('Y-m-d');
@@ -71,8 +79,8 @@ final class GetPricesCommand extends Command
                     $route->getAirportA()->getIata(),
                 );
 
-                $this->savePrices(Curl::performSingleGetAndDecode($url, useProxy: true), $route);
-                usleep(200 * 1000);
+                $this->multiCurl->addHandle(Curl::getFromUrl($url, true), $route->getId()->toString());
+                $batchCount++;
             }
 
             $now = $now->add($interval);
@@ -84,44 +92,48 @@ final class GetPricesCommand extends Command
     }
 
     /** @param array<string, string> $routePrices */
-    private function savePrices(array $routePrices, Route $route) : void
+    private function savePrices(array $routePrices) : void
     {
-        if (! array_key_exists('trips', $routePrices)) {
-            return;
-        }
+        foreach ($routePrices as $routeId => $prices) {
+            $prices = json_decode($prices, true);
 
-        $currency = $routePrices['currency'];
-        foreach ($routePrices['trips'][0]['dates'] as $normalTrip) {
-            foreach ($normalTrip['flights'] as $flight) {
-                if (! array_key_exists('regularFare', $flight)) {
-                    continue;
-                }
-
-                $priceDTOs[] = new Price(
-                    $route,
-                    $currency,
-                    $flight['regularFare']['fares'][0]['amount'],
-                    RouteDirection::NORMAL,
-                    $this->clock->now()->modify($flight['time'][0]),
-                    $this->clock->now()->modify($flight['time'][1]),
-                );
+            if (! array_key_exists('trips', $prices)) {
+                continue;
             }
-        }
 
-        foreach ($routePrices['trips'][1]['dates'] as $reverseTrip) {
-            foreach ($reverseTrip['flights'] as $flight) {
-                if (! array_key_exists('regularFare', $flight)) {
-                    continue;
+            $currency = $prices['currency'];
+            foreach ($prices['trips'][0]['dates'] as $normalTrip) {
+                foreach ($normalTrip['flights'] as $flight) {
+                    if (! array_key_exists('regularFare', $flight)) {
+                        continue;
+                    }
+
+                    $priceDTOs[] = new Price(
+                        $this->routeRepository->get($routeId),
+                        $currency,
+                        $flight['regularFare']['fares'][0]['amount'],
+                        RouteDirection::NORMAL,
+                        $this->clock->now()->modify($flight['time'][0]),
+                        $this->clock->now()->modify($flight['time'][1]),
+                    );
                 }
+            }
 
-                $priceDTOs[] = new Price(
-                    $route,
-                    $currency,
-                    $flight['regularFare']['fares'][0]['amount'],
-                    RouteDirection::REVERSE,
-                    $this->clock->now()->modify($flight['time'][0]),
-                    $this->clock->now()->modify($flight['time'][1]),
-                );
+            foreach ($prices['trips'][1]['dates'] as $reverseTrip) {
+                foreach ($reverseTrip['flights'] as $flight) {
+                    if (! array_key_exists('regularFare', $flight)) {
+                        continue;
+                    }
+
+                    $priceDTOs[] = new Price(
+                        $this->routeRepository->get($routeId),
+                        $currency,
+                        $flight['regularFare']['fares'][0]['amount'],
+                        RouteDirection::REVERSE,
+                        $this->clock->now()->modify($flight['time'][0]),
+                        $this->clock->now()->modify($flight['time'][1]),
+                    );
+                }
             }
         }
 
