@@ -29,7 +29,7 @@ final class DoctrineRouteRepository implements RouteRepository
             ->from(Route::class, 'r')
             ->where('r.airline = :airline')
             ->setParameter('airline', $airline)
-            ->orderBy('r.id ASC');
+            ->orderBy('r.id');
         if ($offset !== null) {
             $queryBuilder->setFirstResult($offset);
         }
