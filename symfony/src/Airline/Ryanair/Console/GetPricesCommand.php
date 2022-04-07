@@ -25,8 +25,6 @@ use function count;
 use function sprintf;
 use function usleep;
 
-use const PHP_EOL;
-
 #[AsCommand(
     name: 'airline:ryanair:prices',
 )]
@@ -62,7 +60,7 @@ final class GetPricesCommand extends Command
         $io->progressStart(count($allRoutes) * self::GENERATION_WEEKS_FORWARD);
         while ($now < $stopDate) {
             foreach ($allRoutes as $route) {
-                    $io->progressAdvance();
+                $io->progressAdvance();
 
                 $stringDate = $now->format('Y-m-d');
                 $url = sprintf(
@@ -89,12 +87,10 @@ final class GetPricesCommand extends Command
     private function savePrices(array $routePrices, Route $route) : void
     {
         if (! array_key_exists('trips', $routePrices)) {
-            echo 'NO TRIPS' . PHP_EOL;
-
             return;
         }
 
-            $currency = $routePrices['currency'];
+        $currency = $routePrices['currency'];
         foreach ($routePrices['trips'][0]['dates'] as $normalTrip) {
             foreach ($normalTrip['flights'] as $flight) {
                 if (! array_key_exists('regularFare', $flight)) {
