@@ -59,8 +59,9 @@ final class MultiCurl
             $returnCode = curl_getinfo($handle, CURLINFO_HTTP_CODE);
             $url = curl_getinfo($handle, CURLINFO_EFFECTIVE_URL);
             if ($returnCode !== 200) {
-                echo 'WRONG RETURN CODE: ' . $returnCode . PHP_EOL;
+                echo PHP_EOL . 'WRONG RETURN CODE: ' . $returnCode . PHP_EOL;
                 echo 'URL: ' . $url . PHP_EOL;
+                echo curl_multi_getcontent($handle) . PHP_EOL;
 
                 continue;
             }

@@ -45,9 +45,13 @@ class Price
     #[ORM\Column(type: 'integer')]
     private int $count = self::DEFAULT_COUNT;
 
+    #[ORM\Column(type: 'datetime_immutable')]
+    private DateTimeImmutable $created;
+
     public function __construct()
     {
         $this->id = Uuid::uuid4();
+        $this->created = new DateTimeImmutable();
     }
 
     public function setRoute(Route $route) : self

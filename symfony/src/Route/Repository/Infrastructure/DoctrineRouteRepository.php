@@ -22,14 +22,23 @@ final class DoctrineRouteRepository implements RouteRepository
     }
 
     /** @inheritDoc */
-    public function findByAirline(Airline $airline) : array
+    public function findByAirline(Airline $airline, int|null $limit = null, int|null $offset = null) : array
     {
-        return $this->entityManager->createQueryBuilder()
+        $queryBuilder = $this->entityManager->createQueryBuilder()
             ->select('r')
             ->from(Route::class, 'r')
             ->where('r.airline = :airline')
             ->setParameter('airline', $airline)
-            ->getQuery()->getResult();
+            ->orderBy('r.id ASC');
+        if ($offset !== null) {
+            $queryBuilder->setFirstResult($offset);
+        }
+
+        if ($limit !== null) {
+            $queryBuilder->setMaxResults($limit);
+        }
+
+        return $queryBuilder->getQuery()->getResult();
     }
 
     public function findByAirlineAndAirports(Airline $airline, Airport $airportA, Airport $airportB) : Route|null

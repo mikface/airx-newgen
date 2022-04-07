@@ -13,7 +13,7 @@ interface RouteRepository
     public function add(Route $route) : void;
 
     /** @return list<Route> */
-    public function findByAirline(Airline $airline) : array;
+    public function findByAirline(Airline $airline, int|null $limit = null, int|null $offset = null,) : array;
 
     public function findByAirlineAndAirports(Airline $airline, Airport $airportA, Airport $airportB) : Route|null;
 
