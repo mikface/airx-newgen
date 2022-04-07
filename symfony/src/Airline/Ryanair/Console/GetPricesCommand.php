@@ -69,8 +69,8 @@ final class GetPricesCommand extends Command
         $offset = $input->getArgument(self::ARGUMENT_OFFSET);
         $allRoutes = $this->routeRepository->findByAirline(
             $airline,
-            $offset === null ? null : intval($offset),
             $limit === null ? null : intval($limit),
+            $offset === null ? null : intval($offset),
         );
         $io->progressStart(count($allRoutes) * self::GENERATION_WEEKS_FORWARD);
         while ($now < $stopDate) {
