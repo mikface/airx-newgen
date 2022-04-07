@@ -32,9 +32,9 @@ final class Curl
         return $ch;
     }
 
-    public static function performSingleGet(string $url) : string
+    public static function performSingleGet(string $url, bool $useProxy = false) : string
     {
-        $ch = self::getFromUrl($url);
+        $ch = self::getFromUrl($url, $useProxy);
         $result = curl_exec($ch);
 
         if (str_starts_with(bin2hex($result), 'efbbbf')) {
@@ -45,9 +45,9 @@ final class Curl
     }
 
     /** @return array<int|string, mixed> */
-    public static function performSingleGetAndDecode(string $url, bool $associative = true) : array
+    public static function performSingleGetAndDecode(string $url, bool $associative = true, bool $useProxy = false) : array
     {
-        $result = json_decode(self::performSingleGet($url), $associative);
+        $result = json_decode(self::performSingleGet($url, $useProxy), $associative);
 
         return $result === false ? [] : $result;
     }

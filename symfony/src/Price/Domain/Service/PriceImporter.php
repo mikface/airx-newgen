@@ -9,22 +9,17 @@ use App\Price\Domain\Repository\PriceRepository;
 use App\Price\Domain\Repository\RateRepository;
 use App\Price\Entity\Price;
 use App\Price\Entity\Rate;
-use App\Route\Repository\Domain\RouteRepository;
 
 final class PriceImporter
 {
-    public function __construct(
-        private PriceRepository $priceRepository,
-        private RateRepository $rateRepository,
-        private RouteRepository $routeRepository
-    ) {
+    public function __construct(private PriceRepository $priceRepository, private RateRepository $rateRepository)
+    {
     }
 
     /** @param list<PriceDTO> $priceDTOs */
-    public function importFromPriceDTO(array $priceDTOs) : void
+    public function importFromPriceDTOs(array $priceDTOs) : void
     {
         foreach ($priceDTOs as $priceDTO) {
-            $route = $this->routeRepository->get($priceDTO->routeId);
             $originalCurrencyCode = $priceDTO->currencyCode;
             $originalPrice = $priceDTO->price;
             $priceEur = $originalPrice;
@@ -38,7 +33,7 @@ final class PriceImporter
                 ->setDeparture($priceDTO->departure)
                 ->setArrival($priceDTO->arrival)
                 ->setPrice($priceEur)
-                ->setRoute($route)
+                ->setRoute($priceDTO->route)
                 ->setDirection($priceDTO->routeDirection);
 
             $this->priceRepository->add($price);
