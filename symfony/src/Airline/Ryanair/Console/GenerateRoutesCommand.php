@@ -4,12 +4,10 @@ declare(strict_types=1);
 
 namespace App\Airline\Ryanair\Console;
 
-use App\Airline\Entity\Airline;
 use App\Airline\Enum\Airline as AirlineEnum;
 use App\Airline\Repository\Domain\AirlineRepository;
 use App\Airport\Domain\AirportRepository;
 use App\Core\Service\Curl;
-use App\Core\Service\MultiCurl;
 use App\Route\Repository\Domain\RouteRepository;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
@@ -18,9 +16,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
 use function count;
-use function intval;
-use function json_decode;
-use function sprintf;
+use function explode;
 
 #[AsCommand(
     name: self::COMMAND_NAME,
@@ -29,13 +25,11 @@ final class GenerateRoutesCommand extends Command
 {
     public const COMMAND_NAME = 'airline:ryanair:generate-routes';
 
-    private const BATCH_SIZE = 100;
-    private const URL = 'https://www.ryanair.com/api/locate/v1/autocomplete/routes?arrivalPhrase=&departurePhrase=%s';
+    private const URL = 'https://www.ryanair.com/api/locate/4/common?embedded=airports&market=en-gb';
 
     public function __construct(
         private AirlineRepository $airlineRepository,
         private AirportRepository $airportRepository,
-        private MultiCurl $multiCurl,
         private RouteRepository $routeRepository
     ) {
         parent::__construct();
@@ -45,43 +39,26 @@ final class GenerateRoutesCommand extends Command
     {
         $io = new SymfonyStyle($input, $output);
         $io->note('Starting Ryanair route import...');
-        $allAirports = $this->airportRepository->getAll();
         $airline = $this->airlineRepository->getByIcao(AirlineEnum::RYANAIR->getInfo()->icao);
-        $io->progressStart(intval(count($allAirports) / self::BATCH_SIZE) + 1);
-        for ($i = 0; $i < count($allAirports); $i++) {
-            $currentAirportIata = $allAirports[$i]->getIata();
-            if ($i % self::BATCH_SIZE === 0) {
-                $io->progressAdvance();
-                $this->saveRoutes($airline, $this->multiCurl->execute());
+        $airports = Curl::performSingleGetAndDecode(self::URL)['airports'] ?? [];
+        $io->progressStart(count($airports));
+        foreach ($airports ?? [] as $airportData) {
+            $airportA = $this->airportRepository->findByIata($airportData['iataCode']);
+            foreach ($airportData['routes'] as $route) {
+                $routeParts = explode(':', $route);
+                if ($routeParts[0] !== 'airport') {
+                    continue;
+                }
+
+                $airportB = $this->airportRepository->findByIata($routeParts[1]);
+                $this->routeRepository->addIfNotExists($airline, $airportA, $airportB);
             }
 
-            $url = sprintf(self::URL, $currentAirportIata);
-            $this->multiCurl->addHandle(Curl::getFromUrl($url), $currentAirportIata);
+            $io->progressAdvance();
         }
 
         $io->progressFinish();
 
         return Command::SUCCESS;
-    }
-
-    /** @param array<string, mixed> $routes */
-    private function saveRoutes(Airline $airline, array $routes) : void
-    {
-        foreach ($routes as $airportACode => $oneAirportRoutes) {
-            $airportA = $this->airportRepository->getByIata($airportACode);
-            $oneAirportRoutes = json_decode($oneAirportRoutes, true);
-            if ($oneAirportRoutes === []) {
-                continue;
-            }
-
-            foreach ($oneAirportRoutes as $oneAirportRoute) {
-                if ($oneAirportRoute['connectingAirport'] !== null) {
-                    continue;
-                }
-
-                $airportB = $this->airportRepository->getByIata($oneAirportRoute['arrivalAirport']['code']);
-                $this->routeRepository->addIfNotExists($airline, $airportA, $airportB);
-            }
-        }
     }
 }
