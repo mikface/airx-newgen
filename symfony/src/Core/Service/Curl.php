@@ -21,7 +21,6 @@ use const CURLINFO_RESPONSE_CODE;
 use const CURLOPT_PROXY;
 use const CURLOPT_PROXYUSERPWD;
 use const CURLOPT_RETURNTRANSFER;
-use const PHP_EOL;
 
 final class Curl
 {
@@ -59,13 +58,16 @@ final class Curl
         ?string $proxySessionId = null
     ) : string {
         $ch = self::getFromUrl($url, $useProxy, $proxySessionId);
-        $returnCode = curl_getinfo($ch, CURLINFO_RESPONSE_CODE);
         $result = curl_exec($ch);
-        while ($returnCode > 299) {
-            echo 'WRONG CODE: ' . $returnCode . PHP_EOL;
+        $returnCode = curl_getinfo($ch, CURLINFO_RESPONSE_CODE);
+        $failCount = 0;
+        while ($returnCode < 200 || $returnCode > 299) {
             $ch = self::getFromUrl($url, $useProxy);
             $result = curl_exec($ch);
             $returnCode = curl_getinfo($ch, CURLINFO_RESPONSE_CODE);
+            if (++$failCount > 5) {
+                return '';
+            }
         }
 
         if (is_string($result) && str_starts_with(bin2hex($result), 'efbbbf')) {

@@ -26,7 +26,7 @@ final class DoctrinePriceRepository implements PriceRepository
             ->select('price')
             ->from(Price::class, 'price')
             ->where('price.route = :routeId')
-            ->setParameter('route', $route->getId()->toString())
+            ->setParameter('routeId', $route->getId()->toString())
             ->getQuery()->getOneOrNullResult();
     }
 }
