@@ -12,6 +12,7 @@ use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
 
 #[ORM\Entity]
+#[ORM\UniqueConstraint(name: 'uniq_price', columns: ['route_id', 'departure', 'direction'])]
 class Price
 {
     private const DEFAULT_COUNT = 2;

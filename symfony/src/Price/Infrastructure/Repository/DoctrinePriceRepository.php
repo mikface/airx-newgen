@@ -8,6 +8,7 @@ use App\Core\Service\EntityManagerConstructor;
 use App\Price\Domain\Repository\PriceRepository;
 use App\Price\Entity\Price;
 use App\Route\Entity\Route;
+use DateTimeImmutable;
 
 final class DoctrinePriceRepository implements PriceRepository
 {
@@ -19,12 +20,13 @@ final class DoctrinePriceRepository implements PriceRepository
         $this->entityManager->flush();
     }
 
-    public function deleteForRoute(Route $route) : void
+    public function findForRouteAndDeparture(Route $route, DateTimeImmutable $departure) : Price|null
     {
-        $this->entityManager->createQueryBuilder()
-            ->delete(Price::class, 'price')
-            ->where('price.route = :route')
-            ->setParameter('route', $route)
-            ->getQuery()->execute();
+        return $this->entityManager->createQueryBuilder()
+            ->select('price')
+            ->from(Price::class, 'price')
+            ->where('price.route = :routeId')
+            ->setParameter('route', $route->getId()->toString())
+            ->getQuery()->getOneOrNullResult();
     }
 }
