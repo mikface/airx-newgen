@@ -7,6 +7,7 @@ namespace App\Airline\Wizzair\Console;
 use App\Airline\Enum\Airline;
 use App\Airline\Repository\Domain\AirlineRepository;
 use App\Airport\Domain\AirportRepository;
+use App\Airport\Entity\Airport;
 use App\Core\Service\Curl;
 use App\Route\Repository\Domain\RouteRepository;
 use Symfony\Component\Console\Attribute\AsCommand;
@@ -48,9 +49,17 @@ final class GenerateRoutesCommand extends Command
 
         $airline = $this->airlineRepository->getByIcao(Airline::WIZZAIR->getInfo()->icao);
         foreach (Curl::performSingleGetAndDecode($apiUrl . self::ROUTES_ENDPOINT)['cities'] ?? [] as $city) {
-            $airportA = $this->airportRepository->getByIata($city['iata']);
+            $airportAiata = $city['iata'];
+            if (in_array($airportAiata, Airport::METROPOLITAN_IATAS, true)) {
+                continue;
+            }
+            $airportA = $this->airportRepository->getByIata($airportAiata);
             foreach ($city['connections'] as $connection) {
-                $airportB = $this->airportRepository->getByIata($connection['iata']);
+                $airportBiata = $connection['iata'];
+                if (in_array($airportBiata, Airport::METROPOLITAN_IATAS, true)) {
+                    continue;
+                }
+                $airportB = $this->airportRepository->getByIata($airportBiata);
                 $this->routeRepository->addIfNotExists($airline, $airportA, $airportB);
             }
         }
