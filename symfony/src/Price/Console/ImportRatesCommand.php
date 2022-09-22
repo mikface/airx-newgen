@@ -24,10 +24,13 @@ final class ImportRatesCommand extends Command
         parent::__construct();
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output) : int
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $rates = Curl::performSingleGetAndDecode(self::API_URL . $_ENV['CURRENCY_API_KEY']);
         foreach ($rates['data'] as $currencyCode => $data) {
+            if (strlen($currencyCode) > 3) {
+                continue;
+            }
             $rate = ($this->rateRepository->findByCode($currencyCode) ?? new Rate())
                 ->setRate($data['value'])
                 ->setCurrencyCode($currencyCode);

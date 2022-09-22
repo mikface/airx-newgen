@@ -28,6 +28,9 @@ class Airport
         'ROM',
         'STO',
         'TCI',
+        'OOS',
+        'VEN',
+        'WKV',
     ];
 
     #[ORM\Id]
