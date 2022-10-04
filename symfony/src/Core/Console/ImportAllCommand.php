@@ -11,6 +11,7 @@ use App\Airline\Volotea\Console\GenerateRoutesCommand as VoloteaRoutesCommand;
 use App\Airline\Vueling\Console\GenerateRoutesCommand as VuelingRoutesCommand;
 use App\Airline\Wizzair\Console\GenerateRoutesCommand as WizzairRoutesCommand;
 use App\Airport\Console\AirportImportCommand;
+use App\Price\Console\ImportRatesCommand;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -24,6 +25,7 @@ final class ImportAllCommand extends Command
 {
     protected function execute(InputInterface $input, OutputInterface $output) : int
     {
+        $this->getApplication()->find(ImportRatesCommand::COMMAND_NAME)->run($input, $output);
         $this->getApplication()->find(AirlineImportCommand::COMMAND_NAME)->run($input, $output);
         $this->getApplication()->find(AirportImportCommand::COMMAND_NAME)->run($input, $output);
         $this->getApplication()->find(EasyjetRoutesCommand::COMMAND_NAME)->run($input, $output);

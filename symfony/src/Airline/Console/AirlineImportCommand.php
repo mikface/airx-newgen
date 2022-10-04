@@ -29,7 +29,11 @@ final class AirlineImportCommand extends Command
     {
         $io = new SymfonyStyle($input, $output);
         $io->note('Starting airline import...');
-        foreach (AirlineEnum::cases() as $case) {
+
+        $airlines = AirlineEnum::cases();
+        $io->progressStart(count($airlines));
+        foreach ($airlines as $case) {
+            $io->progressAdvance();
             $airlineInfo = $case->getInfo();
             $airline = $this->airlineRepository->findByIcao($airlineInfo->icao);
             if ($airline === null) {
@@ -42,6 +46,7 @@ final class AirlineImportCommand extends Command
             $airline->setFullName($airlineInfo->fullName);
             $this->airlineRepository->add($airline);
         }
+        $io->progressFinish();
 
         return Command::SUCCESS;
     }
