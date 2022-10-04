@@ -48,7 +48,11 @@ final class GenerateRoutesCommand extends Command
         }
 
         $airline = $this->airlineRepository->getByIcao(Airline::WIZZAIR->getInfo()->icao);
-        foreach (Curl::performSingleGetAndDecode($apiUrl . self::ROUTES_ENDPOINT)['cities'] ?? [] as $city) {
+        $cities = Curl::performSingleGetAndDecode($apiUrl . self::ROUTES_ENDPOINT)['cities'];
+
+        $io->progressStart(count($cities));
+        foreach ($cities ?? [] as $city) {
+            $io->progressAdvance();
             $airportAiata = $city['iata'];
             if (in_array($airportAiata, Airport::METROPOLITAN_IATAS, true)) {
                 continue;
@@ -63,6 +67,7 @@ final class GenerateRoutesCommand extends Command
                 $this->routeRepository->addIfNotExists($airline, $airportA, $airportB);
             }
         }
+        $io->progressFinish();
 
         return Command::SUCCESS;
     }

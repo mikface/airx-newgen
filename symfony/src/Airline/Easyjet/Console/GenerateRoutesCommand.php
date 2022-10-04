@@ -47,7 +47,11 @@ final class GenerateRoutesCommand extends Command
         $airports = Curl::performSingleGet(self::DATA_URL);
         preg_match('/^var ac_la = (.*);/', $airports, $matches);
         $airportJsonString = str_replace("'", '"', $matches[1]);
-        foreach (json_decode($airportJsonString, true) as $connection) {
+        $connections = json_decode($airportJsonString, true);
+
+        $io->progressStart(count($connections));
+        foreach ($connections as $connection) {
+            $io->progressAdvance();
             $parts = explode('|', $connection);
             $routeEnd = new DateTimeImmutable($parts[3]);
             $now = new DateTimeImmutable();
@@ -59,6 +63,8 @@ final class GenerateRoutesCommand extends Command
             $airportB = $this->airportRepository->getByIata($parts[1]);
             $this->routeRepository->addIfNotExists($airline, $airportA, $airportB);
         }
+
+        $io->progressFinish();
 
         return Command::SUCCESS;
     }

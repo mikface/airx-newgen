@@ -37,8 +37,11 @@ final class GenerateRoutesCommand extends Command
         $io = new SymfonyStyle($input, $output);
         $io->note('Starting Volotea route import...');
         $airline = $this->airlineRepository->getByIcao(Airline::VOLOTEA->getInfo()->icao);
+        $airports = Curl::performSingleGetAndDecode(self::URL);
 
-        foreach (Curl::performSingleGetAndDecode(self::URL) as $fromIata => $airport) {
+        $io->progressStart(count($airports));
+        foreach ($airports as $fromIata => $airport) {
+            $io->progressAdvance();
             $markets = $airport['Markets'];
             if ($markets === []) {
                 continue;
@@ -54,6 +57,7 @@ final class GenerateRoutesCommand extends Command
                 $this->routeRepository->addIfNotExists($airline, $airportA, $airportB);
             }
         }
+        $io->progressFinish();
 
         return Command::SUCCESS;
     }
