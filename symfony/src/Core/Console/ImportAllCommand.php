@@ -22,7 +22,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 )]
 final class ImportAllCommand extends Command
 {
-    protected function execute(InputInterface $input, OutputInterface $output) : void
+    protected function execute(InputInterface $input, OutputInterface $output) : int
     {
         $this->getApplication()->find(AirlineImportCommand::COMMAND_NAME)->run($input, $output);
         $this->getApplication()->find(AirportImportCommand::COMMAND_NAME)->run($input, $output);
@@ -31,5 +31,7 @@ final class ImportAllCommand extends Command
         $this->getApplication()->find(VoloteaRoutesCommand::COMMAND_NAME)->run($input, $output);
         $this->getApplication()->find(VuelingRoutesCommand::COMMAND_NAME)->run($input, $output);
         $this->getApplication()->find(WizzairRoutesCommand::COMMAND_NAME)->run($input, $output);
+
+        return Command::SUCCESS;
     }
 }
