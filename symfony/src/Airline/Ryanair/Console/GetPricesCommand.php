@@ -32,8 +32,8 @@ final class GetPricesCommand extends Command
 {
     private const ARGUMENT_LIMIT = 'limit';
     private const ARGUMENT_OFFSET = 'offset';
-    private const GENERATION_WEEKS_FORWARD = 13;
-    private const GENERATION_INTERVAL = 'P' . self::GENERATION_WEEKS_FORWARD . 'W';
+    private const GENERATION_MONTHS_FORWARD = 3;
+    private const GENERATION_INTERVAL = 'P' . self::GENERATION_MONTHS_FORWARD . 'M';
     private const INTERVAL = 'P1M';
     private const URL_BASE = 'https://www.ryanair.com/api/farfnd/3/roundTripFares' .
     '/%s/%s/cheapestPerDay?market=en-gb&outboundMonthOfDate=%s&inboundMonthOfDate=%s';
@@ -68,7 +68,7 @@ final class GetPricesCommand extends Command
             $limit === null ? null : intval($limit),
             $offset === null ? null : intval($offset),
         );
-        $io->progressStart(count($allRoutes) * self::GENERATION_WEEKS_FORWARD);
+        $io->progressStart(count($allRoutes) * self::GENERATION_MONTHS_FORWARD);
         while ($now < $stopDate) {
             foreach ($allRoutes as $route) {
                 $io->progressAdvance();
