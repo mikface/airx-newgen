@@ -13,6 +13,9 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
+use function count;
+use function strlen;
+
 #[AsCommand(
     name: self::COMMAND_NAME,
 )]
@@ -27,7 +30,7 @@ final class ImportRatesCommand extends Command
         parent::__construct();
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output): int
+    protected function execute(InputInterface $input, OutputInterface $output) : int
     {
         $io = new SymfonyStyle($input, $output);
         $io->note('Starting currency rate import...');
@@ -40,11 +43,13 @@ final class ImportRatesCommand extends Command
             if (strlen($currencyCode) > 3) {
                 continue;
             }
+
             $rate = ($this->rateRepository->findByCode($currencyCode) ?? new Rate())
                 ->setRate($data['value'])
                 ->setCurrencyCode($currencyCode);
             $this->rateRepository->add($rate);
         }
+
         $io->progressFinish();
 
         return Command::SUCCESS;

@@ -29,7 +29,11 @@ final class PriceImporter
 
             $departure = $priceDTO->departure;
             $route = $priceDTO->route;
-            $price = ($this->priceRepository->findForRouteAndDeparture($route, $departure) ?? new Price())
+            $routeDirection = $priceDTO->routeDirection;
+
+            $price = (
+                $this->priceRepository->findForRouteAndDeparture($route, $routeDirection, $departure) ?? new Price()
+            )
                 ->setPriceOriginal($originalPrice)
                 ->setCurrencyOriginal($originalCurrencyCode)
                 ->setDeparture($departure)
