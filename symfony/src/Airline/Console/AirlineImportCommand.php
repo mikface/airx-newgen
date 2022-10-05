@@ -13,6 +13,8 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
+use function count;
+
 #[AsCommand(
     name: self::COMMAND_NAME,
 )]
@@ -46,6 +48,7 @@ final class AirlineImportCommand extends Command
             $airline->setFullName($airlineInfo->fullName);
             $this->airlineRepository->add($airline);
         }
+
         $io->progressFinish();
 
         return Command::SUCCESS;

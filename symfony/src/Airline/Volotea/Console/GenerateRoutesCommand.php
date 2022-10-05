@@ -15,6 +15,8 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
+use function count;
+
 #[AsCommand(
     name: self::COMMAND_NAME
 )]
@@ -57,6 +59,7 @@ final class GenerateRoutesCommand extends Command
                 $this->routeRepository->addIfNotExists($airline, $airportA, $airportB);
             }
         }
+
         $io->progressFinish();
 
         return Command::SUCCESS;

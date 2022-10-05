@@ -16,6 +16,9 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
+use function count;
+use function in_array;
+
 use const PHP_EOL;
 
 #[AsCommand(
@@ -57,16 +60,19 @@ final class GenerateRoutesCommand extends Command
             if (in_array($airportAiata, Airport::METROPOLITAN_IATAS, true)) {
                 continue;
             }
+
             $airportA = $this->airportRepository->getByIata($airportAiata);
             foreach ($city['connections'] as $connection) {
                 $airportBiata = $connection['iata'];
                 if (in_array($airportBiata, Airport::METROPOLITAN_IATAS, true)) {
                     continue;
                 }
+
                 $airportB = $this->airportRepository->getByIata($airportBiata);
                 $this->routeRepository->addIfNotExists($airline, $airportA, $airportB);
             }
         }
+
         $io->progressFinish();
 
         return Command::SUCCESS;
