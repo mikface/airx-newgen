@@ -4,6 +4,7 @@ SYMFONY_ENV_FILE="symfony-variables.env"
 if [ ! -f "$MYSQL_ENV_FILE" ] || [ ! -f "$SYMFONY_ENV_FILE" ]; then
   #vars
   read -p "Enter APP_ENV value: " APP_ENV
+  read -p "Enter Currency api key: " CURRENCY_API_KEY
   ROOT_PASSWORD=`< /dev/urandom tr -dc _A-Z-a-z-0-9 | head -c${1:-32};echo;`
   PASSWORD=`< /dev/urandom tr -dc _A-Z-a-z-0-9 | head -c${1:-32};echo;`
   SYMFONY_APP_SECRET=`< /dev/urandom tr -dc _A-Z-a-z-0-9 | head -c${1:-32};echo;`
@@ -19,6 +20,7 @@ if [ ! -f "$MYSQL_ENV_FILE" ] || [ ! -f "$SYMFONY_ENV_FILE" ]; then
   echo "APP_SECRET=$SYMFONY_APP_SECRET" >> "$SYMFONY_ENV_FILE"
   echo "DATABASE_URL=mysql://$USER_DATABASE:$PASSWORD@$DB_CONTAINER:3306/$USER_DATABASE?serverVersion=8.0" >> "$SYMFONY_ENV_FILE"
   echo 'CORS_ALLOW_ORIGIN=^https?://(localhost|127\.0\.0\.1)(:[0-9]+)?$' >> "$SYMFONY_ENV_FILE"
+  echo "CURRENCY_API_KEY=$CURRENCY_API_KEY" >> "$SYMFONY_ENV_FILE"
 fi
 docker-compose up -d
 if [ $? -ne 0 ]; then
