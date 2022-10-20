@@ -80,6 +80,9 @@ final class GenerateRoutesCommand extends Command
 
     private function getApiUrl() : string|null
     {
-        return Curl::performSingleGetAndDecode(self::METADATA_URL)['apiUrl'] ?? null;
+        return Curl::performSingleGetAndDecode(
+            self::METADATA_URL,
+                headers: ['Host: wizzair.com', 'Accept: application/json']
+            )['apiUrl'] ?? null;
     }
 }
